@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tier Crafter</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .blob {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      filter: blur(80px);
+      background: radial-gradient(circle, #38bdf8, transparent);
+      animation: float 10s infinite alternate;
+    }
+
+    .blob:nth-child(1){ top:10%; left:5%; }
+    .blob:nth-child(2){
+      top:60%; left:70%;
+      background: radial-gradient(circle,#6366f1,transparent);
+    }
+
+    @keyframes float {
+      from { transform: translateY(0); }
+      to { transform: translateY(40px); }
+    }
+
+    .container {
+      max-width: 320px;
+      margin: 60px auto;
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(15px);
+      text-align: center;
+    }
+
+    input {
+      width: 60px;
+      margin: 5px;
+      padding: 6px;
+      border-radius: 8px;
+      border: none;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    button {
+      padding: 10px;
+      margin: 8px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg,#38bdf8,#6366f1);
+      color: white;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 10px;
+      border-collapse: collapse;
+    }
+
+    td, th {
+      padding: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="blob"></div>
+<div class="blob"></div>
+
+<div class="container">
+  <h2>🎮 Tier Crafter</h2>
+
+  T1 <input id="t1" type="number" value="0"><br>
+  T2 <input id="t2" type="number" value="0"><br>
+  T3 <input id="t3" type="number" value="0"><br>
+  T4 <input id="t4" type="number" value="0"><br>
+  T5 <input id="t5" type="number" value="0"><br>
+
+  <button onclick="craft()">Craft</button>
+
+  <div id="output"></div>
+</div>
+
+<script>
+function getV() {
+  return {
+    t1:+t1.value||0,
+    t2:+t2.value||0,
+    t3:+t3.value||0,
+    t4:+t4.value||0,
+    t5:+t5.value||0
+  };
+}
+
+function setV(v){
+  t1.value=v.t1;
+  t2.value=v.t2;
+  t3.value=v.t3;
+  t4.value=v.t4;
+  t5.value=v.t5;
+}
+
+// ✅ REAL (NO CHAIN) CRAFT
+function craft(){
+  let v=getV();
+  let o={...v};
+
+  let made={
+    t2:Math.floor(o.t1/2),
+    t3:Math.floor(o.t2/3),
+    t4:Math.floor(o.t3/4),
+    t5:Math.floor(o.t4/5),
+    t6:Math.floor(o.t5/6)
+  };
+
+  v.t1-=made.t2*2;
+  v.t2-=made.t3*3;
+  v.t3-=made.t4*4;
+  v.t4-=made.t5*5;
+  v.t5-=made.t6*6;
+
+  v.t2+=made.t2;
+  v.t3+=made.t3;
+  v.t4+=made.t4;
+  v.t5+=made.t5;
+
+  setV(v);
+
+  output.innerHTML=`
+  <h3>🛠 Crafted</h3>
+  <table>
+    <tr><th>Tier</th><th>Made</th></tr>
+    <tr><td>T2</td><td>${made.t2}</td></tr>
+    <tr><td>T3</td><td>${made.t3}</td></tr>
+    <tr><td>T4</td><td>${made.t4}</td></tr>
+    <tr><td>T5</td><td>${made.t5}</td></tr>
+    <tr><td>T6</td><td>${made.t6}</td></tr>
+  </table>`;
+}
+
+// register SW (enable only after testing)
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
+}
+</script>
+
+</body>
+</html>
